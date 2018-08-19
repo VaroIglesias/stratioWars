@@ -17,11 +17,11 @@ object IOOperations extends LazyLogging {
   //method to validate contents of json file
   def jsonvalidator(json: JsValue): Either[List[Coordinates], JsValue] = {
     implicit val coordinatesReads: Reads[Coordinates] = (
-      (JsPath \ "galaxy").read[String].filter(JsonValidationError("galaxy field is not format compliant"))(x => x.forall(_.isLetterOrDigit) && x.length == 8) and
-        (JsPath \ "quadrant").read[String].filter(JsonValidationError("quadrant field is not format compliant"))(x => x.forall(_.isLetterOrDigit) && x.length == 4) and
-        (JsPath \ "starsystem1").read[String].filter(JsonValidationError("starsystem1 field is not format compliant"))(x => x.forall(_.isLetterOrDigit) && x.length == 4) and
-        (JsPath \ "starsystem2").read[String].filter(JsonValidationError("starsystem2 field is not format compliant"))(x => x.forall(_.isLetterOrDigit) && x.length == 4) and
-        (JsPath \ "planet").read[String].filter(JsonValidationError("planet field is not format compliant"))(x => x.forall(_.isLetterOrDigit) && x.length == 12)
+      (JsPath \ "galaxy").read[String].filter(JsonValidationError("galaxy field is not format compliant"))(_.matches("[a-fA-F0-9]{8}")) and
+        (JsPath \ "quadrant").read[String].filter(JsonValidationError("quadrant field is not format compliant"))(_.matches("[a-fA-F0-9]{4}")) and
+        (JsPath \ "starsystem1").read[String].filter(JsonValidationError("starsystem1 field is not format compliant"))(_.matches("[a-fA-F0-9]{4}")) and
+        (JsPath \ "starsystem2").read[String].filter(JsonValidationError("starsystem2 field is not format compliant"))(_.matches("[a-fA-F0-9]{4}")) and
+        (JsPath \ "planet").read[String].filter(JsonValidationError("planet field is not format compliant"))(_.matches("[a-zA-Z0-9]{12}"))
       ) (Coordinates.apply _)
 
     val validatedjson: Either[List[Coordinates], JsValue] = json.validate[List[Coordinates]] match {
